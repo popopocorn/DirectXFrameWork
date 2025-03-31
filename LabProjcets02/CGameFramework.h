@@ -49,7 +49,7 @@ private:
 	static const UINT m_nSwapChainBuffers = 2;
 	UINT m_nSwapChainBufferIndex;
 
-	ID3D12Resource* m_ppd3dRenderTargetBuffers[m_nSwapChainBuffers];
+	ID3D12Resource* m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
 	ID3D12DescriptorHeap* m_pd3dRtvDescriptorHeap;
 	UINT m_nRtvDescriptorIncrementSize;
 
