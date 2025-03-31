@@ -1,8 +1,8 @@
-﻿// LabProject04.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿// LabProject05.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
 #include "stdafx.h"
-#include "LabProject04.h"
+#include "LabProject05.h"
 #include "CGameFramework.h"
 CGameFramework gGameFramework;
 
@@ -31,7 +31,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_LABPROJECT04, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_LABPROJECT05, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // 애플리케이션 초기화를 수행합니다:
@@ -40,7 +40,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT04));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT05));
 
     MSG msg;
 
@@ -81,7 +81,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
-    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT04));
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT05));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 

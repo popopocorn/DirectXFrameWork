@@ -1,6 +1,8 @@
 #pragma once
 #include"Timer.h"
 
+
+
 class CGameFramework
 {
 public:
@@ -8,6 +10,7 @@ public:
 	~CGameFramework();
 
 	void ChangeSwapChainState();
+	
 
 	bool OnCreate(HINSTANCE hInstance, HWND hMainWnd);
 
