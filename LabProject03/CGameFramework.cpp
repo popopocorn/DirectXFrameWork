@@ -3,6 +3,7 @@
 
 CGameFramework::CGameFramework()
 {
+	OutputDebugString(L"Call debug");
 	m_pdxgiFactory = NULL;
 	m_pdxgiSwapChain = NULL;
 	m_pd3dDevice = NULL;
@@ -278,7 +279,9 @@ void CGameFramework::AnimateObjects() {
 
 }
 void CGameFramework::FrameAdvance() {
+
 	m_GameTimer.Tick(0.0f);
+	
 	ProcessInput();
 	AnimateObjects();
 
@@ -334,14 +337,15 @@ void CGameFramework::FrameAdvance() {
 	dxgiPresentParameters.pDirtyRects = NULL;
 	dxgiPresentParameters.pScrollRect = NULL;
 	dxgiPresentParameters.pScrollOffset = NULL;
-	m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
-
+	//m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
+	m_pdxgiSwapChain->Present(0, 0);
+	m_GameTimer.GetFrameRate(m_pszFrameRate + 11, 37);
+	::SetWindowText(m_hWnd, m_pszFrameRate);
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 
-	m_pdxgiSwapChain->Present(0, 0);
 	
-	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
-	::SetWindowText(m_hWnd, m_pszFrameRate);
+	
+
 }
 
 void CGameFramework::WaitForGpuComplete() {
