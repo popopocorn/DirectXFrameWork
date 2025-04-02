@@ -92,7 +92,6 @@ void CGameFramework::OnDestroy() {
 	HRESULT hResult = pdxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
 	pdxgiDebug->Release();
 
-
 #endif
 
 }
