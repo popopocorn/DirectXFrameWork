@@ -1,6 +1,6 @@
 #pragma once
 #include"Timer.h"
-
+#include"Scene.h"
 
 
 class CGameFramework
@@ -10,7 +10,7 @@ public:
 	~CGameFramework();
 
 	void ChangeSwapChainState();
-	
+	void MoveToNextFrame();
 
 	bool OnCreate(HINSTANCE hInstance, HWND hMainWnd);
 
@@ -71,7 +71,7 @@ private:
 	ID3D12PipelineState* m_pd3dpipelinedState;
 
 	ID3D12Fence* m_pd3dFence;
-	UINT64 m_nFenceValue;
+	UINT64 m_nFenceValues[m_nSwapChainBuffers];
 	HANDLE m_hFenceEvent;
 
 	D3D12_VIEWPORT m_d3dViewport;
@@ -80,5 +80,7 @@ private:
 
 	CGameTimer m_GameTimer;
 	_TCHAR m_pszFrameRate[50];
+
+	CScene* m_pScene;
 };
 

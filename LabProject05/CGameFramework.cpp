@@ -26,7 +26,13 @@ CGameFramework::CGameFramework()
 
 	m_hFenceEvent = NULL;
 	m_pd3dFence = NULL;
-	m_nFenceValue = 0;
+
+	for (int i = 0; i < m_nSwapChainBuffers; ++i)
+		m_nFenceValues[i] = 0;
+	m_pScene = NULL;
+
+	m_d3dViewport = { 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f };
+	m_d3dScissorRect = { 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT };
 
 	m_nWndClientWidth= FRAME_BUFFER_WIDTH;
 	m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
@@ -188,7 +194,7 @@ void CGameFramework::CreateDirect3DDevice() {
 	m_bMsaa4xEnable = (m_nMsaa4xQualityLevels > 1) ? true : false;
 
 	hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)&m_pd3dFence);
-	m_nFenceValue = 0;
+	//m_nFenceValue = 0;
 
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
@@ -265,27 +271,39 @@ void CGameFramework::CreateDepthStencilView() {
 }
 
 void CGameFramework::BuildObjects() {
+	m_pScene = new CScene();
+	if (m_pScene)
+		m_pScene->BuildObjects(m_pd3dDevice);
+	m_GameTimer.Reset();
 
 }
 void CGameFramework::ReleaseObjects() {
-
+	if (m_pScene)
+		m_pScene->ReleaseObjects();
+	if (m_pScene)
+		delete m_pScene;
 }
 
 void CGameFramework::ProcessInput() {
 
 }
 void CGameFramework::AnimateObjects() {
-
+	if (m_pScene)
+		m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed());
 }
 void CGameFramework::FrameAdvance() {
 
 	m_GameTimer.Tick(0.0f);
 	
 	ProcessInput();
+
 	AnimateObjects();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+
+	m_pd3dCommandList->RSSetViewports(1, &m_d3dViewport);
+	m_pd3dCommandList->RSSetScissorRects(1, &m_d3dScissorRect);
 
 	D3D12_RESOURCE_BARRIER d3ddResourceBarrier;
 	::ZeroMemory(&d3ddResourceBarrier, sizeof(D3D12_RESOURCE_BARRIER));
@@ -297,24 +315,23 @@ void CGameFramework::FrameAdvance() {
 	d3ddResourceBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	d3ddResourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	m_pd3dCommandList->ResourceBarrier(1, &d3ddResourceBarrier);
-	m_pd3dCommandList->RSSetViewports(1, &m_d3dViewport);
-	m_pd3dCommandList->RSSetScissorRects(1, &m_d3dScissorRect);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle =
 		m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * m_nRtvDescriptorIncrementSize);
 
-	float pfClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-	m_pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle, pfClearColor, 0, NULL);
-
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle =
 		m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL
-		, 1.0f, 0, 0, NULL);
+	m_pd3dCommandList->OMSetRenderTargets(1, &d3dRtvCPUDescriptorHandle, FALSE, 
+		&d3dDsvCPUDescriptorHandle);
+	
+	float pfClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
+	m_pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle, pfClearColor, 0, NULL);
 	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle,
 		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
-	m_pd3dCommandList->OMSetRenderTargets(1, &d3dRtvCPUDescriptorHandle, TRUE,
-		&d3dDsvCPUDescriptorHandle);
+
+	if (m_pScene)
+		m_pScene->Render(m_pd3dCommandList);
 
 	//RenderingCode
 
@@ -327,20 +344,16 @@ void CGameFramework::FrameAdvance() {
 	hResult = m_pd3dCommandList->Close();
 
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
-	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+	m_pd3dCommandQueue->ExecuteCommandLists(_countof(ppd3dCommandLists), ppd3dCommandLists);
 
 	WaitForGpuComplete();
 
-	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
-	dxgiPresentParameters.DirtyRectsCount = 0;
-	dxgiPresentParameters.pDirtyRects = NULL;
-	dxgiPresentParameters.pScrollRect = NULL;
-	dxgiPresentParameters.pScrollOffset = NULL;
-	//m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
 	m_pdxgiSwapChain->Present(0, 0);
+
+	MoveToNextFrame();
+
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 11, 37);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
-	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 
 	
 	
@@ -348,12 +361,11 @@ void CGameFramework::FrameAdvance() {
 }
 
 void CGameFramework::WaitForGpuComplete() {
-	++m_nFenceValue;
-	const UINT64 nFence = m_nFenceValue;
-	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFence);
+	UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
+	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFenceValue);
 
-	if (m_pd3dFence->GetCompletedValue() < nFence) {
-		hResult = m_pd3dFence->SetEventOnCompletion(nFence, m_hFenceEvent);
+	if (m_pd3dFence->GetCompletedValue() < nFenceValue) {
+		hResult = m_pd3dFence->SetEventOnCompletion(nFenceValue, m_hFenceEvent);
 		::WaitForSingleObject(m_hFenceEvent, INFINITE);
 	}
 }
@@ -452,4 +464,15 @@ void CGameFramework::ChangeSwapChainState() {
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 
 	CreateRenderTargetViews();
+}
+
+void CGameFramework::MoveToNextFrame() {
+	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+
+	UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
+	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFenceValue);
+	if (m_pd3dFence->GetCompletedValue() < nFenceValue) {
+		hResult = m_pd3dFence->SetEventOnCompletion(nFenceValue, m_hFenceEvent);
+		::WaitForSingleObject(m_hFenceEvent, INFINITE);
+	}
 }

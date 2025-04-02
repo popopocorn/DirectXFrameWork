@@ -1,6 +1,5 @@
 #include"stdafx.h"
 #include "Timer.h"
-#include<iostream>
 
 CGameTimer::CGameTimer()
 {
