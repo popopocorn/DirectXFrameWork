@@ -1,3 +1,4 @@
+
 float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
 {
     float4 output = (float4) 0;
@@ -38,4 +39,4 @@ float4 PSMain(float4 input : SV_Position) : SV_Target
     cColor.r = input.x / FRAME_BUFFER_WIDTH;
     cColor.g = input.y / FRAME_BUFFER_HEIGHT;
     return cColor;
-}   
+}
