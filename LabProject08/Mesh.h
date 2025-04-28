@@ -41,7 +41,7 @@ protected:
 	ID3D12Resource* m_pd3dVertexBuffer = NULL;
 	ID3D12Resource* m_pd3dVertexUploadBuffer = NULL;
 
-	D3D12_VERTEX_BUFFER_VIEW m_d3dVertexBufferView;
+	D3D12_VERTEX_BUFFER_VIEW m_d3dVerrtexBufferView;
 	D3D12_PRIMITIVE_TOPOLOGY m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	UINT m_nSlot = 0;
 	UINT m_nVertices = 0;
@@ -58,13 +58,4 @@ class CTriangleMesh : public CMesh {
 public:
 	CTriangleMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual ~CTriangleMesh() {};
-};
-
-class CCubeMeshDiffused : public CMesh
-{
-public:
-	//직육면체의 가로, 세로, 깊이의 길이를 지정하여 직육면체 메쉬를 생성한다.
-	CCubeMeshDiffused(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
-		* pd3dCommandList, float fWidth = 2.0f, float fHeight = 2.0f, float fDepth = 2.0f);
-	virtual ~CCubeMeshDiffused();
 };

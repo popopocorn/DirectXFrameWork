@@ -1,8 +1,8 @@
-﻿// LabProject07.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿// LabProject08.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
 #include "stdafx.h"
-#include "LabProject07.h"
+#include "LabProject08.h"
 #include "CGameFramework.h"
 CGameFramework gGameFramework;
 
@@ -31,7 +31,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_LABPROJECT07, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_LABPROJECT08, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // 애플리케이션 초기화를 수행합니다:
@@ -40,7 +40,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT07));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT08));
 
     MSG msg;
 
@@ -50,7 +50,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) break;
-            if (! ::TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) {
+            if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) {
                 ::TranslateMessage(&msg);
                 ::DispatchMessage(&msg);
             }
@@ -81,7 +81,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
-    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT07));
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT08));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
@@ -111,7 +111,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     HWND hmainWnd = CreateWindowW(szWindowClass, szTitle, dwStyle,
         CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance, NULL);
 
-    if (! hmainWnd)
+    if (!hmainWnd)
     {
         return FALSE;
     }
