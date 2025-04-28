@@ -1,5 +1,5 @@
 #pragma once
-
+#include"Camera.h"
 class CVertex {
 protected:
 	XMFLOAT3 m_xmf3Position;

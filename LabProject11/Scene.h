@@ -1,6 +1,7 @@
 #pragma once
 #include"Timer.h"
 #include"Shader.h"
+#include"Camera.h"
 class CScene
 {
 public:

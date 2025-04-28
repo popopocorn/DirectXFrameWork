@@ -1,7 +1,7 @@
 #pragma once
 #include"Timer.h"
 #include"Scene.h"
-
+#include"Camera.h"
 
 class CGameFramework
 {
