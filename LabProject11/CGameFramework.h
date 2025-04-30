@@ -2,6 +2,7 @@
 #include"Timer.h"
 #include"Scene.h"
 #include"Camera.h"
+#include"Player.h"
 
 class CGameFramework
 {
@@ -36,6 +37,10 @@ public:
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+
+	CPlayer* m_pPlayer = NULL;
+	//마지막으로 마우스 버튼을 클릭할 때의 마우스 커서의 위치이다.
+	POINT m_ptOldCursorPos;
 
 private:
 	HINSTANCE m_hInstance;

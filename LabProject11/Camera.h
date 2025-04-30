@@ -93,7 +93,7 @@ public:
 	D3D12_VIEWPORT GetViewport() { return(m_d3dViewport); }
 	D3D12_RECT GetScissorRect() { return(m_d3dScissorRect); }
 	//카메라를 xmf3Shift 만큼 이동한다.
-	virtual void Move(XMFLOAT3& xmf3Shift) {
+	virtual void Move(XMFLOAT3 xmf3Shift) {
 		m_xmf3Position.x += xmf3Shift.x;
 		m_xmf3Position.y += xmf3Shift.y; m_xmf3Position.z += xmf3Shift.z;
 	}
@@ -103,4 +103,29 @@ public:
 	virtual void Update(XMFLOAT3& xmf3LookAt, float fTimeElapsed) {}
 	//3인칭 카메라에서 카메라가 바라보는 지점을 설정한다. 일반적으로 플레이어를 바라보도록 설정한다.
 	virtual void SetLookAt(XMFLOAT3& xmf3LookAt) {}
+};
+
+class CSpaceShipCamera : public CCamera
+{
+public:
+	CSpaceShipCamera(CCamera* pCamera);
+	virtual ~CSpaceShipCamera() {}
+	virtual void Rotate(float fPitch = 0.0f, float fYaw = 0.0f, float fRoll = 0.0f);
+};
+
+class CFirstPersonCamera : public CCamera
+{
+public:
+	CFirstPersonCamera(CCamera* pCamera);
+	virtual ~CFirstPersonCamera() {}
+	virtual void Rotate(float fPitch = 0.0f, float fYaw = 0.0f, float fRoll = 0.0f);
+};
+
+class CThirdPersonCamera : public CCamera
+{
+public:
+	CThirdPersonCamera(CCamera* pCamera);
+	virtual ~CThirdPersonCamera() {}
+	virtual void Update(XMFLOAT3& xmf3LookAt, float fTimeElapsed);
+	virtual void SetLookAt(XMFLOAT3& vLookAt);
 };
