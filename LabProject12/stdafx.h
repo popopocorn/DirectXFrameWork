@@ -132,7 +132,7 @@ namespace Vector3
 		return(XMConvertToDegrees(acosf(XMVectorGetX(xmvAngle))));
 	}
 
-	inline float Angle(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
+	inline float Angle(XMFLOAT3 xmf3Vector1, XMFLOAT3 xmf3Vector2)
 	{
 		return(Angle(XMLoadFloat3(&xmf3Vector1), XMLoadFloat3(&xmf3Vector2)));
 	}

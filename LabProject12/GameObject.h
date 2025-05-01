@@ -16,9 +16,9 @@ public:
 	void AddRef() { ++m_nReferences; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle);
-
-protected:
 	XMFLOAT4X4 m_xmf4x4World;
+protected:
+
 	CMesh* m_pMesh = NULL;
 
 	CShader* m_pShader = NULL;
@@ -32,6 +32,8 @@ public:
 
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera*);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT
+		nInstances, D3D12_VERTEX_BUFFER_VIEW d3dInstancingBufferView);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 		* pd3dCommandList);
